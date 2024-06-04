@@ -22,8 +22,9 @@
     Class.forName(dbDriver);
     conn = DriverManager.getConnection(dbURL, dbUser, dbPasswd);
 
-    String sql = "SELECT cafeteria_code, menu_num, menu_name, menu_price, count FROM cart WHERE user_id = 2222";
+    String sql = "SELECT cafeteria_code, menu_num, menu_name, menu_price, count FROM cart WHERE user_id = ?";
     pstmt = conn.prepareStatement(sql);
+    pstmt.setInt(1, Integer.parseInt(user));
     rs = pstmt.executeQuery();
 
     while (rs.next()) {
