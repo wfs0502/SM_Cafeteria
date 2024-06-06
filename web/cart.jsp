@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <title>장바구니</title>
-    <link rel="stylesheet" type="text/css" href="CSS/cart.css">
+    <link rel="stylesheet" type="text/css" href="CSS/cart.css?after">
     <style>
         .item-divider {
             border-top: 1px solid #ccc;
@@ -25,27 +25,21 @@
 
         function increaseQuantity(id) {
             var quantityElement = document.getElementById('quantity-' + id);
-            var quantity = parseInt(quantityElement.innerText);
-            quantityElement.innerText = quantity + 1;
-            var minusButton = document.getElementById('minus-' + id);
-            minusButton.src = 'images/minus2.svg';
-            minusButton.onclick = function() { decreaseQuantity(id); };
+            var quantity = parseInt(quantityElement.innerText) + 1;
+            quantityElement.innerText = quantity;
             updateItemTotal(id);
             updateTotal();
+            updateQuantityInDatabase(id, quantity);
         }
 
         function decreaseQuantity(id) {
             var quantityElement = document.getElementById('quantity-' + id);
-            var quantity = parseInt(quantityElement.innerText);
-            if (quantity > 1) {
-                quantityElement.innerText = quantity - 1;
-                if (quantity - 1 === 1) {
-                    var minusButton = document.getElementById('minus-' + id);
-                    minusButton.src = 'images/minus1.svg';
-                    minusButton.onclick = null;
-                }
+            var quantity = parseInt(quantityElement.innerText) - 1;
+            if (quantity > 0) {
+                quantityElement.innerText = quantity;
                 updateItemTotal(id);
                 updateTotal();
+                updateQuantityInDatabase(id, quantity);
             }
         }
 
@@ -68,6 +62,42 @@
                 total += quantity * price;
             }
             document.getElementById('total-price').innerText = formatPrice(total);
+        }
+
+        function updateQuantityInDatabase(menuNum, quantity) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'cartData.jsp', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('수량 업데이트 성공');
+                } else {
+                    console.error('수량 업데이트 실패');
+                }
+            };
+            xhr.send('action=updateQuantity&menuNum=' + menuNum + '&quantity=' + quantity);
+        }
+
+        function deleteItems() {
+            var selectedItems = document.querySelectorAll('.item-checkbox:checked');
+            var menuNums = [];
+            selectedItems.forEach(function(item) {
+                menuNums.push(item.value);
+            });
+            if (menuNums.length > 0) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'cartData.jsp', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        console.log('삭제 성공');
+                        location.reload();
+                    } else {
+                        console.error('삭제 실패');
+                    }
+                };
+                xhr.send('action=deleteItems&menuNums=' + menuNums.join(','));
+            }
         }
 
         window.onload = function() {
@@ -96,6 +126,7 @@
 <div class="container">
     <h1>장바구니</h1>
     <div class="item-divider"></div>
+    <button onclick="deleteItems()">선택 삭제</button>
     <%
         List<Map<String, Object>> cartItems = (List<Map<String, Object>>) request.getAttribute("cartItems");
         Map<String, List<Map<String, Object>>> categorizedItems = new HashMap<>();
@@ -134,6 +165,7 @@
         %>
         <div class="cart-item">
             <div class="item-info">
+                <input type="checkbox" class="item-checkbox" value="<%= item.get("menuNum") %>">
                 <div class="item-image">
                     <img src="images/image1.png" alt="메뉴 이미지">
                 </div>
