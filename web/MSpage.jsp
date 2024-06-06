@@ -17,11 +17,12 @@
         Class.forName(dbDriver);
         conn = DriverManager.getConnection(dbURL, dbUser, dbPasswd);
         stmt = conn.createStatement();
-        String query = "SELECT menu_name, menu_price FROM menu where cafeteria_code = 'ms' AND menu_category='컵밥'";
+        String query = "SELECT menu_num, menu_name, menu_price FROM menu where cafeteria_code = 'ms' AND menu_category='컵밥'";
         rs = stmt.executeQuery(query);
 
         while (rs.next()) {
             Map<String, String> menuItem = new HashMap<>();
+            menuItem.put("menu_num", rs.getString("menu_num"));
             menuItem.put("menu_name", rs.getString("menu_name"));
             menuItem.put("menu_price", rs.getString("menu_price"));
 
@@ -111,9 +112,14 @@
             </div>
             <div class="quantity">
                 <label for="<%= quantityId %>">수량 :</label>
-                <input type="number" id="<%= quantityId %>" name="quantity" value="0" min="0" max="5">
+                <input type="number" id="<%= quantityId %>" name="quantity" value="1" min="1" max="5">
             </div>
-            <button id="<%= addToCartId %>" class="add-to-cart" data-name="<%= name %>" data-quantity-id="<%= quantityId %>" data-modal-id="<%= modalId %>">장바구니</button>
+            <form id="form<%= i %>" action="addToCart.jsp" method="post">
+                <input type="hidden" name="cafeteriaCode" value="ms">
+                <input type="hidden" name="menuNum" value="<%= menuItem.get("menu_num") %>">
+                <input type="hidden" id="count<%= i %>" name="count" value=1>
+                <button type="submit" id="<%= addToCartId %>" class="add-to-cart" data-name="<%= name %>" data-quantity-id="<%= quantityId %>" data-modal-id="<%= modalId %>" data-form-id="form<%= i %>">장바구니</button>
+            </form>
             <button onclick="closeModal('<%= modalId %>')" class="add-to-cart">닫기</button>
         </div>
         <%
@@ -154,7 +160,11 @@
                 var quantityId = this.getAttribute('data-quantity-id');
                 var modalId = this.getAttribute('data-modal-id');
                 var quantity = document.getElementById(quantityId).value;
+                var formId = this.getAttribute('data-form-id');
+                var form = document.getElementById(formId);
+                form.querySelector('input[name="count"]').value = quantity;
                 alert(name + ' ' + quantity + '개가 장바구니에 추가되었습니다.');
+                form.submit();
                 closeModal(modalId);
             });
         }
