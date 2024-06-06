@@ -1,14 +1,28 @@
+@charset "UTF-8";
 .mainpage {
     justify-content: center;
     align-items: center;
 }
 
 .category {
+    list-style: none;
     padding-top: 30px;
     padding-left: 15%;
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+}
+.category a:hover {
+    color: #4F709C;
+}
+.category li{
+    list-style: none;
+    display: flex;
+}
+.category a{
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 .menu-item {
     font-size: 16px;
@@ -38,7 +52,7 @@
     margin: 0 auto;
 }
 
-.menu-item-card {
+button {
     width: 230px;
     height: 300px;
     background-color: #FAFAFA;
@@ -101,7 +115,7 @@
     font-family: 'Noto Sans', sans-serif;
     font-weight: 500;
     word-wrap: break-word;
-    width: 70%;
+    width: 25%;
 }
 
 .menu-item-add-container {
@@ -129,4 +143,71 @@
     font-family: 'Noto Sans', sans-serif;
     font-weight: 700;
     word-wrap: break-word;
+}
+.quantity {
+    margin: 10px 0;
+}
+
+.quantity label {
+    margin-right: 10px;
+}
+
+.quantity input {
+    width: 60px;
+    padding: 4px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.add-to-cart {
+    display:block;
+    width: 40%;
+    height:10%;
+    background-color: #4F709C;;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 5px;
+    cursor: pointer;
+    margin-left: 80px;
+    margin-top: 50px;
+}
+
+.add-to-cart:hover {
+    background-color: #0056b3;
+}
+.modal {
+    display: none;
+    position: fixed; /* 변경된 부분 */
+    top: 50%; /* 수직 중앙 정렬 */
+    left: 40%; /* 수평 중앙 정렬 */
+    width:300px;
+    height:400px;
+    padding:20px;
+    text-align: center;
+    background-color: rgb(255,255,255);
+    border-radius:10px;
+    box-shadow:0 2px 3px 0 rgba(34,36,38,0.15);
+    transform:translateY(-50%);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 5px;
+}
+
+.close {
+    display:none;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
