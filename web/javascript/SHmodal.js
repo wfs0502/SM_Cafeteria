@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById('addToCartWestern').addEventListener('click', function () {
-        var quantity = document.getElementById('WesternQuantity').value;
+        var quantity = document.getElementById('westernQuantity').value;
         alert('양식 식권 ' + quantity + '장이 장바구니에 추가되었습니다.');
         closeModal('westernMealModal');
     });

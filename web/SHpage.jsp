@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.*" %>
 <%@ include file="header.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -92,60 +92,48 @@
     %>
     <span class="buttoncontainer">
         <!-- Korean Menu -->
-        <form action="addToCart.jsp" method="post">
-            <input type="hidden" name="cafeteriaCode" value="sh">
-            <input type="hidden" name="menuCategory" value="한식">
-            <input type="hidden" name="count" value="1">
-            <button class="SHmenu1" type="submit">
-                <div>
-                    <div class="menu-items">
-                        <%
-                            for (String menuItem : koreanMenu) {
-                                out.println("<p>" + menuItem + "</p>");
-                                out.println("<input type='hidden' name='menuName' value='" + menuItem + "'>");
-                            }
-                        %>
-                    </div>
-                    <hr>
-                    <div class="footer">
-                        <div class="category">한식</div>
-                        <p class="price">6,500원</p>
-                    </div>
-                    <div class="menu-item-add">
-                        <img class="menu-item-add-icon" src="images/cart.svg" alt="Cart Icon">
-                        <span class="menu-item-add-text">담기</span>
-                    </div>
+        <button class="SHmenu1" onclick="openModal('koreanMealModal')">
+            <div>
+                <div class="menu-items">
+                    <%
+                        for (String menuItem : koreanMenu) {
+                            out.println("<p>" + menuItem + "</p>");
+                        }
+                    %>
                 </div>
-            </button>
-        </form>
+                <hr>
+                <div class="footer">
+                    <div class="category">한식</div>
+                    <p class="price">6,500원</p>
+                </div>
+                <div class="menu-item-add">
+                    <img class="menu-item-add-icon" src="images/cart.svg" alt="Cart Icon">
+                    <span class="menu-item-add-text">담기</span>
+                </div>
+            </div>
+        </button>
 
         <!-- Western Menu -->
-        <form action="addToCart.jsp" method="post">
-            <input type="hidden" name="cafeteriaCode" value="sh">
-            <input type="hidden" name="menuCategory" value="양식">
-            <input type="hidden" name="count" value="1">
-            <button class="SHmenu2" type="submit">
-                <div>
-                    <div class="menu-items">
-                        <%
-                            for (String menuItem : westernMenu) {
-                                out.println("<p>" + menuItem + "</p>");
-                                out.println("<input type='hidden' name='menuName' value='" + menuItem + "'>");
-                            }
-                        %>
-                    </div>
-                    <hr>
-                    <div class="footer">
-                        <div class="category">양식</div>
-                        <p class="price">6,500원</p>
-                    </div>
-                    <div class="menu-item-add">
-                        <img class="menu-item-add-icon" src="images/cart.svg" alt="Cart Icon">
-                        <span class="menu-item-add-text">담기</span>
-                    </div>
+        <button class="SHmenu2" onclick="openModal('westernMealModal')">
+            <div>
+                <div class="menu-items">
+                    <%
+                        for (String menuItem : westernMenu) {
+                            out.println("<p>" + menuItem + "</p>");
+                        }
+                    %>
                 </div>
-            </button>
-        </form>
+                <hr>
+                <div class="footer">
+                    <div class="category">양식</div>
+                    <p class="price">6,500원</p>
+                </div>
+                <div class="menu-item-add">
+                    <img class="menu-item-add-icon" src="images/cart.svg" alt="Cart Icon">
+                    <span class="menu-item-add-text">담기</span>
+                </div>
+            </div>
+        </button>
     </span>
 </div>
 <!-- 모달 -->
@@ -157,12 +145,16 @@
     </div>
     <div class="quantity">
         <label for="koreanQuantity">수량 :</label>
-        <input type="number" id="koreanQuantity" name="quantity" value="0" min="0" max="5">
+        <input type="number" id="koreanQuantity" name="quantity" value="1" min="1" max="5">
     </div>
 
-    <button id="addToCartKorean" class="add-to-cart">장바구니</button>
+    <form action="addToCart.jsp" method="post">
+        <input type="hidden" name="cafeteriaCode" value="sh">
+        <input type="hidden" name="menuNum" value=202>
+        <input type="hidden" id="koreanCount" name="count" value="1">
+        <button type="submit" id="addToCartKorean" class="add-to-cart">장바구니</button>
+    </form>
     <button onclick="closeModal('koreanMealModal')" class="add-to-cart">닫기</button>
-
 </div>
 
 <!-- Western Meal Modal -->
@@ -172,15 +164,36 @@
         <p>양식 식권</p>
     </div>
     <div class="quantity">
-        <label for="WesternQuantity">수량 :</label>
-        <input type="number" id="WesternQuantity" name="quantity" value="0" min="0" max="5">
+        <label for="westernQuantity">수량 :</label>
+        <input type="number" id="westernQuantity" name="quantity" value="1" min="1" max="5">
     </div>
 
-    <button id="addToCartWestern" class="add-to-cart">장바구니</button>
+    <form action="addToCart.jsp" method="post">
+        <input type="hidden" name="cafeteriaCode" value="sh">
+        <input type="hidden" name="menuNum" value=203>
+        <input type="hidden" id="westernCount" name="count" value="1">
+        <button type="submit" id="addToCartWestern" class="add-to-cart">장바구니</button>
+    </form>
     <button onclick="closeModal('westernMealModal')" class="add-to-cart">닫기</button>
-
 </div>
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    document.getElementById("koreanQuantity").addEventListener("input", function() {
+        document.getElementById("koreanCount").value = this.value;
+    });
+
+    document.getElementById("westernQuantity").addEventListener("input", function() {
+        document.getElementById("westernCount").value = this.value;
+    });
+</script>
 <script src="javascript/SHpage.js"></script>
-<script src="javascript/SHmodal.js"></script>
+<script src="javascript/SHmodal.js?v=<%= System.currentTimeMillis() %>"></script>
 </body>
 </html>
