@@ -116,6 +116,17 @@
                 xhr.send('action=deleteItems&menuNums=' + menuNums.join(','));
             }
         }
+        //추가된 function
+        function getSelectedMenuDetails() {
+            var selectedItems = document.querySelectorAll('.item-checkbox:checked');
+            var menuDetails = [];
+            selectedItems.forEach(function(item) {
+                var id = item.value;
+                var quantity = document.getElementById('quantity-' + id).innerText;
+                menuDetails.push(id + ':' + quantity);
+            });
+            return menuDetails.join(',');
+        }
 
         window.onload = function() {
             var minusElements = document.getElementsByClassName('minus-button');
@@ -159,6 +170,7 @@
     %>
     <div class="item-divider"></div>
     <%
+
         Map<String, List<Map<String, Object>>> categorizedItems = new HashMap<>();
         categorizedItems.put("ms", new ArrayList<>());
         categorizedItems.put("sh", new ArrayList<>());
@@ -199,7 +211,7 @@
             <div class="item-info">
                 <input type="checkbox" class="item-checkbox" value="<%= item.get("menuNum") %>" style="margin-right: 20px;">
                 <div class="item-image">
-                    <img src="images/image1.png" alt="메뉴 이미지">
+                    <img src="images/image_yet.png" alt="메뉴 이미지">
                 </div>
                 <div class="item-details">
                     <p class="item-name"><%= item.get("menuName") %></p>
@@ -235,19 +247,22 @@
     } else {
     %>
     <div class="item-divider"></div>
-    <%
-        int totalPrice = 0;
-        for (Map<String, Object> item : cartItems) {
-            totalPrice += (int) item.get("price") * (int) item.get("count");
-        }
-    %>
-    <div class="total">
-        <p>합계</p>
-        <p id="total-price" class="total-price"><%= String.format("%,d원", totalPrice) %></p>
-    </div>
-    <div class="order-button" style="margin-bottom: 20px;">
-        <button>주문하기</button>
-    </div>
+    <form action="submitOrder.jsp" method="POST" onsubmit="document.getElementById('selectedMenuDetails').value = getSelectedMenuDetails();">
+        <input type="hidden" id="selectedMenuDetails" name="selectedMenuDetails" value="">
+        <%
+            int totalPrice = 0;
+            for (Map<String, Object> item : cartItems) {
+                totalPrice += (int) item.get("price") * (int) item.get("count");
+            }
+        %>
+        <div class="total">
+            <p>합계</p>
+            <p id="total-price" class="total-price"><%= String.format("%,d원", totalPrice) %></p>
+        </div>
+        <div class="order-button" style="margin-bottom: 20px;">
+            <button type="submit">주문하기</button>
+        </div>
+    </form>
     <%
         }
     %>
@@ -259,6 +274,7 @@
         checkboxes.forEach(checkbox => {
             checkbox.checked = !allChecked;
         });
+        updateTotal();
     }
 </script>
 </body>
