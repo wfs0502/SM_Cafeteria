@@ -116,7 +116,7 @@
                 xhr.send('action=deleteItems&menuNums=' + menuNums.join(','));
             }
         }
-        //추가된 function
+
         function getSelectedMenuDetails() {
             var selectedItems = document.querySelectorAll('.item-checkbox:checked');
             var menuDetails = [];
@@ -126,6 +126,23 @@
                 menuDetails.push(id + ':' + quantity);
             });
             return menuDetails.join(',');
+        }
+
+        function toggleSelectAll() {
+            var selectAllCheckbox = document.getElementById('toggleSelectAllCheckbox');
+            var checkboxes = document.querySelectorAll('.item-checkbox');
+            var isChecked = selectAllCheckbox.checked;
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = isChecked;
+            });
+            updateTotal();
+        }
+
+        function updateSelectAllCheckbox() {
+            var selectAllCheckbox = document.getElementById('toggleSelectAllCheckbox');
+            var checkboxes = document.querySelectorAll('.item-checkbox');
+            var allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+            selectAllCheckbox.checked = allChecked;
         }
 
         window.onload = function() {
@@ -143,7 +160,10 @@
             var checkboxes = document.getElementsByClassName('item-checkbox');
             for (var i = 0; i < checkboxes.length; i++) {
                 checkboxes[i].checked = true;
-                checkboxes[i].addEventListener('change', updateTotal);
+                checkboxes[i].addEventListener('change', function() {
+                    updateTotal();
+                    updateSelectAllCheckbox();
+                });
             }
             updateTotal();
         }
@@ -267,15 +287,5 @@
         }
     %>
 </div>
-<script>
-    function toggleSelectAll() {
-        var checkboxes = document.querySelectorAll('.item-checkbox');
-        var allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = !allChecked;
-        });
-        updateTotal();
-    }
-</script>
 </body>
 </html>
